@@ -1,7 +1,8 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "../../firebase.init";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Link } from "react-router";
 
 const Register = () => {
   // Error ar jonno state declear
@@ -62,7 +63,15 @@ const Register = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((result) => {
         console.log(result);
-        setSuccess(true);
+        
+
+        // Email verify ki na ta janner jonno Email verify korlam
+        sendEmailVerification(auth.currentUser)
+        .then(()=>{
+          setSuccess(true);
+          alert("We sent you a verification email. please check your email")
+        })
+
       })
       .catch((error) => {
         setErrorMassage(error.message);
@@ -106,6 +115,7 @@ const Register = () => {
           <br />
           <button className="btn btn-neutral mt-4">Login</button>
         </form>
+        <p>Already Have an Account? Please <Link className="text-blue-500 underline" to='/login'>Login</Link></p>
         {errorMassage && <p className="text-red-500">{errorMassage}</p>}
         {success && (
           <p className="text-green-500">User Has Created Successfully</p>
