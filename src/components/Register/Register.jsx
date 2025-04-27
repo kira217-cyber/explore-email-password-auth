@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "../../firebase.init";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -20,6 +20,8 @@ const Register = () => {
   const handleRegister = (e) => {
     e.preventDefault();
 
+    const name = e.target.name.value;
+    console.log(name)
     const email = e.target.email.value;
     const password = e.target.password.value;
     const terms = e.target.terms.checked;
@@ -72,6 +74,18 @@ const Register = () => {
           alert("We sent you a verification email. please check your email")
         })
 
+        // Update user Profile
+        const profile = {
+          displayName:name
+          
+        }
+        updateProfile(auth.currentUser,profile)
+        .then(()=>{
+          console.log("Profile Updated")
+        }).catch(error=>{
+          console.log(error)
+        })
+
       })
       .catch((error) => {
         setErrorMassage(error.message);
@@ -83,6 +97,13 @@ const Register = () => {
       <div className="card-body">
         <h1 className="text-3xl font-bold">Please Register Now!</h1>
         <form onSubmit={handleRegister} className="fieldset">
+        <label className="label">Name</label>
+          <input
+            type="text"
+            name="name"
+            className="input"
+            placeholder="Name"
+          />
           <label className="label">Email</label>
           <input
             type="email"
@@ -104,9 +125,6 @@ const Register = () => {
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
-          </div>
-          <div>
-            <a className="link link-hover">Forgot password?</a>
           </div>
           <label className="label mt-2">
             <input type="checkbox" name="terms" className="checkbox" />
